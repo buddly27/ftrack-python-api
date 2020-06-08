@@ -231,6 +231,7 @@ class Session(object):
             self._api_key, self._api_user
         )
 
+        self._auto_populate = {}
         self.auto_populate = auto_populate
 
         # Fetch server information and in doing so also check credentials.
@@ -350,6 +351,16 @@ class Session(object):
     def event_hub(self):
         '''Return event hub.'''
         return self._event_hub
+
+    @property
+    def auto_populate(self):
+        thread = threading.current_thread()
+        return self._auto_populate.get(thread.ident, True)
+
+    @auto_populate.setter
+    def auto_populate(self, value):
+        thread = threading.current_thread()
+        self._auto_populate[thread.ident] = value
 
     @property
     def _local_cache(self):
